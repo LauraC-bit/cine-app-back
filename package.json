@@ -1,0 +1,37 @@
+{
+  "name": "basic_server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "dev_old": "nodemon src/index.js",
+<<<<<<< HEAD
+    "dev": "nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.dev",
+    "prod": "nodemon -r dotenv/config src/index.js dotenv_config_path=./.env.prod"
+=======
+    "dev": "nodemon -r dotenv/config src index.js dotenv_config_path=./.env.dev",
+    "prod": "nodemon -r dotenv/config src index.js dotenv_config_path=./.env.prod"
+>>>>>>> 570aceb6903f16c979d0a70c3c04a17604f13125
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.1",
+<<<<<<< HEAD
+    "mongodb": "^5.7.0",
+    "mongoose": "^7.4.3",
+    "mongosh": "^1.10.5",
+=======
+    "mongoose": "^7.4.2",
+>>>>>>> 570aceb6903f16c979d0a70c3c04a17604f13125
+    "nodemon": "^3.0.1",
+    "react-uuid": "^2.0.0",
+    "validator": "^13.11.0"
+  },
+  "type": "module"
+}

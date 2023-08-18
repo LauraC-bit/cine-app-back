@@ -1,0 +1,28 @@
+version: "3"
+services:
+  mongodb:
+    image: mongo
+    restart: unless-stopped
+    container_name: mongo_basic_c
+    env_file: ./.env.dev
+    volumes:
+      - mongo-db-dev:/data/db
+
+  node_basics:
+    command: npm run dev
+    restart: unless-stopped
+    container_name: node_basics_c
+    image: node_basics_i
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    env_file: ./.env.dev
+    volumes:
+      - ./src/:/home/node/app/src:ro
+    depends_on:
+      - mongodb
+
+volumes:
+  mongo-db-dev:
