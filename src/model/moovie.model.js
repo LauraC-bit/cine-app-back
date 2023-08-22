@@ -1,4 +1,8 @@
-import { Schema, createCollection } from "../config/mongoose.config.js";
+import {
+  ObjectId,
+  Schema,
+  createCollection,
+} from "../config/mongoose.config.js";
 
 const moovieSchema = new Schema({
   title: {
@@ -31,6 +35,7 @@ const moovieSchema = new Schema({
   poster_path: {
     type: String,
   },
+  AddedBy: { type: ObjectId, ref: "User" },
 });
 const Moovie = createCollection("Moovie", moovieSchema);
 

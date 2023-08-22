@@ -37,8 +37,6 @@ const get = () => {
 
 // ----------------------------------------------------------- READ
 
-const CURRENT_DIR = process.cwd();
-
 const getAll = async (req, res) => {
   const { userId } = req.body;
   const result = await mooviesDAO.read(userId);

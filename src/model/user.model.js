@@ -1,5 +1,9 @@
 import { emailIsValid } from "../utils/regex.utils.js";
-import { Schema, createCollection } from "../config/mongoose.config.js";
+import {
+  ObjectId,
+  Schema,
+  createCollection,
+} from "../config/mongoose.config.js";
 
 const USER_ROLE = {
   ADMIN: "admin",
@@ -54,7 +58,7 @@ const userSchema = new Schema({
       message: "",
     },
   },
-  tel: Number,
+  FavorisMoviesAdd: [{ type: Number, ref: "Moovie" }],
 });
 
 // creation d'un model a partir du schema

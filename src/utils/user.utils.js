@@ -5,6 +5,7 @@ export const getUserInfos = (user) => {
     role: user.role,
     email: user.email,
     pseudo: user.pseudo,
+    FavorisMoviesAdd: user.FavorisMoviesAdd,
   };
 
   return formatedUser;

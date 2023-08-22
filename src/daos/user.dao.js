@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import User from "../model/user.model.js";
+import Moovie from "../model/moovie.model.js";
 
 const { readFile, writeFile } = fs;
 const CURRENT_DIR = process.cwd();
@@ -74,15 +75,25 @@ const readByEmail = async (userEmail) => {
   }
 };
 
-const signUp = async (email, password, pseudo, tel, role) => {
+const signUp = async (pseudo, email, password, role, moovie) => {
   let error = null;
   let result = null;
 
-  // premiere methode
-  const user = { email, password, pseudo, tel, role };
-
   try {
-    const createdUser = await User.create(user);
+    // premiere methode
+    const { user } = await readByEmail(email);
+    if (!!user) throw new Error(`User with email ${email} already exist`);
+
+    const MoviesAdded = !moovie ? [] : await Moovie.insertMany(moovie);
+
+    const createdUser = await User.create({
+      pseudo,
+      email,
+      password,
+      role,
+      // lien entre les models crees en bdd et le user
+      MoviesAdded,
+    });
     result = createdUser;
   } catch (e) {
     console.log(e.message);
@@ -100,7 +111,111 @@ const signUp = async (email, password, pseudo, tel, role) => {
   // await user_.save();
 };
 
+const deleteOne = async (userId) => {
+  let error = null;
+  let deletedUser = null;
+
+  try {
+    // suppression du user via son id avec la methode deleteOne et le filtre approprie
+    const result = await User.deleteOne({ _id: userId });
+    // si pas ou plus d'1 document est supprime => erreur
+    if (result.deletedCount !== 1)
+      throw new Error(
+        `Something goes wrong - deleted count: ${result.deletedCount}`
+      );
+
+    // on renvoi au client l'id du user qui a ete supprime
+    deletedUser = userId;
+  } catch (e) {
+    console.error(e.message);
+    error = e.message;
+  } finally {
+    return { error, deletedUser };
+  }
+};
+
+const updatePseudo = async (id, pseudo) => {
+  let error = null;
+  let updatedUser = null;
+
+  try {
+    // 1ere methode
+    // recuperation du user depuis la BDD via son id
+    const user = await User.findById(id);
+    // si user === null => on leve une erreur
+    if (!user) throw new Error(`User with id ${id} not found`);
+    // modifiation du user et de la props voulue
+    user.pseudo = pseudo || user.pseudo; // { _id, email ...}
+    // sauvegarde de la modification
+    updatedUser = await user.save();
+
+    // 2eme methode
+    // // mise a jour direct du user en utilisant le filtre id et la props pseudo
+    // // updatedOne prend deux params: le premier est un objet representant le filtre, le deuxieme la props a modifier
+    // updatedUser = await User.updateOne({ _id: id }, { pseudo: pseudo });
+    // // si pas ou plus de 1 element modifie => on leve une erreur
+    // if (updatedUser.modifiedCount !== 1)
+    //   throw new Error(`Something goes wrong ${updatedUser.modifiedCount}`);
+  } catch (e) {
+    console.error(e.message);
+    error = e.message;
+  } finally {
+    return { error, updatedUser };
+  }
+};
+
+const updateFavMovies = async (id, favorisMovies) => {
+  let error = null;
+  let updatedUser = null;
+
+  try {
+    // 1ere methode
+    // recuperation du user depuis la BDD via son id
+    const user = await User.findById(id);
+    // si user === null => on leve une erreur
+    if (!user) throw new Error(`User with id ${id} not found`);
+    // modifiation du user et de la props voulue
+    user.FavorisMoviesAdd = favorisMovies || user.FavorisMoviesAdd; // { _id, email ...}
+    // sauvegarde de la modification
+    updatedUser = await user.save();
+
+    // 2eme methode
+    // // mise a jour direct du user en utilisant le filtre id et la props pseudo
+    // // updatedOne prend deux params: le premier est un objet representant le filtre, le deuxieme la props a modifier
+    // updatedUser = await User.updateOne({ _id: id }, { pseudo: pseudo });
+    // // si pas ou plus de 1 element modifie => on leve une erreur
+    // if (updatedUser.modifiedCount !== 1)
+    //   throw new Error(`Something goes wrong ${updatedUser.modifiedCount}`);
+  } catch (e) {
+    console.error(e.message);
+    error = e.message;
+  } finally {
+    return { error, updatedUser };
+  }
+};
+
+const getUserWithMovies = async (userId) => {
+  let user = null;
+  let error = null;
+
+  try {
+    // recup du user via son id ET de tous les todos associes grace a la methode populate
+    user = await User.findById(userId).populate("FavorisMoviesAdd");
+    // user = await User.findById(userId).populate({ path: "todosCreated", select: "value" });
+    if (!user) throw new Error(`User with id ${userId} not found`);
+  } catch (e) {
+    console.error(e.message);
+    error = e.message;
+  } finally {
+    return { error, user };
+  }
+};
+
 export const UserDAO = {
   signUp,
   readByEmail,
+  deleteOne,
+  updatePseudo,
+  updateFavMovies,
+  getUserWithMovies,
 };
