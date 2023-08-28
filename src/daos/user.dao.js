@@ -175,7 +175,7 @@ const updateFavMovies = async (id, favorisMovies) => {
     // si user === null => on leve une erreur
     if (!user) throw new Error(`User with id ${id} not found`);
     // modifiation du user et de la props voulue
-    user.FavorisMoviesAdd = favorisMovies || user.FavorisMoviesAdd; // { _id, email ...}
+    user.FavorisMoviesAdd = user.FavorisMoviesAdd.push(favorisMovies);
     // sauvegarde de la modification
     updatedUser = await user.save();
 
