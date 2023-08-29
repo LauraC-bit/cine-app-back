@@ -1,14 +1,14 @@
 import { UserDAO } from "../daos/user.dao.js";
 import { jwtSign } from "../utils/jwt.utils.js";
-import { omit } from "../utils/object.utils.js";
 import { getUserInfos } from "../utils/user.utils.js";
 import { compareHash, hash } from "../utils/hash.utils.js";
 
-const getAll = async (req, res) => {
-  const result = await UserDAO.read();
+const getUser = async (req, res) => {
+  const { userId } = req.body;
+  const result = await UserDAO.readById(userId);
   if (!!result.error) return res.status(400).json({ message: result.error });
 
-  return res.json({ users: result.users });
+  return res.json({ user: result.user });
 };
 
 const login = async (req, res) => {
@@ -104,9 +104,9 @@ const getUserWithMovies = async (req, res) => {
 };
 
 export const UserController = {
-  getAll,
   login,
   signUp,
+  getUser,
   deleteOne,
   updatePseudo,
   getUserWithMovies,

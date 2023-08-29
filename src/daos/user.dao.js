@@ -1,31 +1,5 @@
-import fs from "node:fs/promises";
 import User from "../model/user.model.js";
 import Moovie from "../model/moovie.model.js";
-
-const { readFile, writeFile } = fs;
-const CURRENT_DIR = process.cwd();
-
-const readAll = async (userId) => {
-  // on part du principe d'avoir un user ou une erreur, les deux init a null
-  let users = null;
-  let error = null;
-
-  try {
-    // on essaye de recup des users avec un filtre
-    // la methode findById permet de recup un model directement via son id
-    // ici l'id est envoye direct en tant que param de la fonction
-    const result = await User.find();
-    // sinon on attribue le user
-    users = result;
-  } catch (e) {
-    console.error(e.message);
-    // definition de l'erreur si on passe dans le catch
-    error = `Cannot read users: ${e.message}`;
-  } finally {
-    // retour de l'erreur et du resultat; un des deux est forcement null
-    return { error, users };
-  }
-};
 
 const readById = async (userId) => {
   // on part du principe d'avoir un user ou une erreur, les deux init a null
@@ -36,7 +10,7 @@ const readById = async (userId) => {
     // on essaye de recup un user avec un id
     // la methode findById permet de recup un model directement via son id
     // ici l'id est envoye direct en tant que param de la fonction
-    const result = await User.findById(userId);
+    const result = await User.findById({ _id: userId });
     // si result === null => on leve une erreur avec un message specifique
     if (!result) throw new Error(`User with id ${userId} not found`);
     // sinon on attribue le user
@@ -213,6 +187,7 @@ const getUserWithMovies = async (userId) => {
 
 export const UserDAO = {
   signUp,
+  readById,
   readByEmail,
   deleteOne,
   updatePseudo,

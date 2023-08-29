@@ -3,7 +3,7 @@ import { UserController } from "../controllers/user.controller.js";
 
 const initUserRoutes = (app, sm, jwt) => {
   const router = Router();
-  router.get("/get-all", jwt, sm, UserController.getAll);
+  router.get("/get-user", jwt, sm, UserController.getUser);
   router.post("/login", sm, UserController.login);
   router.post("/sign-up", sm, UserController.signUp);
   router.patch("/update-pseudo", jwt, sm, UserController.updatePseudo);
