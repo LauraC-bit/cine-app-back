@@ -58,7 +58,7 @@ const userSchema = new Schema({
       message: "",
     },
   },
-  FavorisMoviesAdd: [{ type: Number }],
+  FavorisMoviesAdd: [{ type: ObjectId, ref: "Moovie" }],
 });
 
 // creation d'un model a partir du schema

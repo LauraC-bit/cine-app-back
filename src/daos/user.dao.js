@@ -138,29 +138,37 @@ const updatePseudo = async (id, pseudo) => {
   }
 };
 
-const updateFavMovies = async (id, favorisMovies) => {
+const updateFavMovies = async (id, favorisMovies, deleteFromFav) => {
   let error = null;
   let updatedUser = null;
 
   try {
-    // 1ere methode
-    // recuperation du user depuis la BDD via son id
-    const user = await User.findById(id);
-    // si user === null => on leve une erreur
-    if (!user) throw new Error(`User with id ${id} not found`);
-    // modifiation du user et de la props voulue
-    user.FavorisMoviesAdd = user.FavorisMoviesAdd.push(favorisMovies);
-    // sauvegarde de la modification
-    updatedUser = await user.save();
-
-    // 2eme methode
-    // // mise a jour direct du user en utilisant le filtre id et la props pseudo
-    // // updatedOne prend deux params: le premier est un objet representant le filtre, le deuxieme la props a modifier
-    // updatedUser = await User.updateOne({ _id: id }, { pseudo: pseudo });
-    // // si pas ou plus de 1 element modifie => on leve une erreur
-    // if (updatedUser.modifiedCount !== 1)
-    //   throw new Error(`Something goes wrong ${updatedUser.modifiedCount}`);
+    if (deleteFromFav === false) {
+      // recuperation du user depuis la BDD via son id
+      let user = await User.findById(id);
+      // si user === null => on leve une erreur
+      if (!user) throw new Error(`User with id ${id} not found`);
+      user = await user.populate("FavorisMoviesAdd");
+      let moovie_to_add = await Moovie.findById(favorisMovies);
+      // modifiation du user et de la props voulue
+      user.FavorisMoviesAdd.push(moovie_to_add._id);
+      // sauvegarde de la modification
+      updatedUser = await user.save();
+    } else {
+      let user = await User.findById(id);
+      // si user === null => on leve une erreur
+      if (!user) throw new Error(`User with id ${id} not found`);
+      user = await user.populate("FavorisMoviesAdd");
+      let moovie_to_add = await Moovie.findById(favorisMovies);
+      // modifiation du user et de la props voulue
+      console.log(user.FavorisMoviesAdd);
+      user.FavorisMoviesAdd.splice(moovie_to_add._id, 1);
+      console.log(user.FavorisMoviesAdd);
+      // sauvegarde de la modification
+      updatedUser = await user.save();
+    }
   } catch (e) {
+    console.log("nope");
     console.error(e.message);
     error = e.message;
   } finally {

@@ -70,12 +70,15 @@ const updatePseudo = async (req, res) => {
 };
 
 const updateFavMovies = async (req, res) => {
-  const { userId, favorisMovies } = req.body;
+  const { userId, favorisMovies, deleteFromFav } = req.body;
 
   const { error, updatedUser } = await UserDAO.updateFavMovies(
     userId,
-    favorisMovies
+    favorisMovies,
+    deleteFromFav
   );
+  console.log(favorisMovies);
+  console.log(deleteFromFav);
   if (!!error) return res.status(400).json({ message: error });
 
   return res.json({
