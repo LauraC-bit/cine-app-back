@@ -7,7 +7,7 @@ const getUser = async (req, res) => {
   const { userId } = req.body;
   const result = await UserDAO.readById(userId);
   if (!!result.error) return res.status(400).json({ message: result.error });
-
+  console.log(result.user);
   return res.json({ user: result.user });
 };
 
@@ -57,15 +57,21 @@ const signUp = async (req, res) => {
   });
 };
 
-const updatePseudo = async (req, res) => {
-  const { pseudo, userId } = req.body;
+const updateUser = async (req, res) => {
+  const { pseudo, email, password, userId } = req.body;
 
-  const { error, updatedUser } = await UserDAO.updatePseudo(userId, pseudo);
-  if (!!error) return res.status(400).json({ message: error });
+  const { hashed, err } = await hash(password);
+  if (!!err || !hashed) return res.status(400).json({ message: err });
+
+  const resultUser = await UserDAO.updateUser(userId, pseudo, email, hashed);
+  if (!!resultUser.error)
+    return res.status(400).json({ message: resultUser.error });
+
+  console.log(resultUser.updatedUser);
 
   return res.json({
     message: `User updated successfully`,
-    user: getUserInfos(updatedUser),
+    user: getUserInfos(resultUser.updatedUser),
   });
 };
 
@@ -111,7 +117,7 @@ export const UserController = {
   signUp,
   getUser,
   deleteOne,
-  updatePseudo,
+  updateUser,
   getUserWithMovies,
   updateFavMovies,
 };

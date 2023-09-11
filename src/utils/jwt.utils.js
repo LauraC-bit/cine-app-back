@@ -1,11 +1,10 @@
 import jwt from "jsonwebtoken";
-// import { secret } from "../config/jwt.config.js";
 import { stringIsFilled } from "./string.utils.js";
 
 export const secret = process.env.JWT_SECRET || "JWT_SECRET";
 
 const jwtOptions = {
-  expiresIn: `28800000`, // 8h
+  expiresIn: `31 days`,
 };
 
 export const jwtVerify = (token) => {

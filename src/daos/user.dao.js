@@ -75,14 +75,6 @@ const signUp = async (pseudo, email, password, role, moovie) => {
   } finally {
     return { result, error };
   }
-
-  // deuxieme methode
-  // const user_ = new User({
-  //   email,
-  //   password,
-  //   pseudo,
-  // });
-  // await user_.save();
 };
 
 const deleteOne = async (userId) => {
@@ -108,28 +100,21 @@ const deleteOne = async (userId) => {
   }
 };
 
-const updatePseudo = async (id, pseudo) => {
+const updateUser = async (id, pseudo, email, password) => {
   let error = null;
   let updatedUser = null;
 
   try {
-    // 1ere methode
     // recuperation du user depuis la BDD via son id
     const user = await User.findById(id);
     // si user === null => on leve une erreur
     if (!user) throw new Error(`User with id ${id} not found`);
     // modifiation du user et de la props voulue
-    user.pseudo = pseudo || user.pseudo; // { _id, email ...}
+    user.pseudo = pseudo || user.pseudo;
+    user.email = email || user.email;
+    user.password = password || user.password;
     // sauvegarde de la modification
     updatedUser = await user.save();
-
-    // 2eme methode
-    // // mise a jour direct du user en utilisant le filtre id et la props pseudo
-    // // updatedOne prend deux params: le premier est un objet representant le filtre, le deuxieme la props a modifier
-    // updatedUser = await User.updateOne({ _id: id }, { pseudo: pseudo });
-    // // si pas ou plus de 1 element modifie => on leve une erreur
-    // if (updatedUser.modifiedCount !== 1)
-    //   throw new Error(`Something goes wrong ${updatedUser.modifiedCount}`);
   } catch (e) {
     console.error(e.message);
     error = e.message;
@@ -198,7 +183,7 @@ export const UserDAO = {
   readById,
   readByEmail,
   deleteOne,
-  updatePseudo,
+  updateUser,
   updateFavMovies,
   getUserWithMovies,
 };

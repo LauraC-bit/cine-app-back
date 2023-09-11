@@ -2,7 +2,8 @@ import { jwtVerify } from "../utils/jwt.utils.js";
 
 export const jwtMiddleware = (req, res, next) => {
   const token = req.headers.authorization;
-  console.log(token);
+  console.log("tokenfrommiddleware " + token);
+  console.log("route:", req.route.path);
 
   const userId = jwtVerify(token);
 
