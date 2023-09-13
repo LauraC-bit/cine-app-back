@@ -59,6 +59,10 @@ const userSchema = new Schema({
     },
   },
   FavorisMoviesAdd: [{ type: ObjectId, ref: "Moovie" }],
+  //DarkMode : {
+  //type : String,
+  //default : "OFF"
+  //}
 });
 
 // creation d'un model a partir du schema
