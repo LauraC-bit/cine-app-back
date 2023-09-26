@@ -100,7 +100,29 @@ const deleteOne = async (userId) => {
   }
 };
 
-const updateUser = async (id, pseudo, email, password) => {
+const deleteMovie = async (userId, favorisMovies) => {
+  let error = null;
+  let updatedUser = null;
+
+  try {
+    let user = await User.findById(userId);
+    // si user === null => on leve une erreur
+    if (!user) throw new Error(`User with id ${userId} not found`);
+    user = await user.populate("FavorisMoviesAdd");
+    let moovie_to_add = await Moovie.findById(favorisMovies);
+    // modifiation du user et de la props voulue
+    user.FavorisMoviesAdd.splice(moovie_to_add._id, 1);
+    // sauvegarde de la modification
+    updatedUser = await user.save();
+  } catch (e) {
+    console.error(e.message);
+    error = e.message;
+  } finally {
+    return { error, updatedUser };
+  }
+};
+
+const updateUser = async (id, pseudo, email, password, darkMode) => {
   let error = null;
   let updatedUser = null;
 
@@ -113,6 +135,7 @@ const updateUser = async (id, pseudo, email, password) => {
     user.pseudo = pseudo || user.pseudo;
     user.email = email || user.email;
     user.password = password || user.password;
+    user.darkMode = darkMode || user.darkMode;
     // sauvegarde de la modification
     updatedUser = await user.save();
   } catch (e) {
@@ -128,30 +151,16 @@ const updateFavMovies = async (id, favorisMovies, deleteFromFav) => {
   let updatedUser = null;
 
   try {
-    if (deleteFromFav === false) {
-      // recuperation du user depuis la BDD via son id
-      let user = await User.findById(id);
-      // si user === null => on leve une erreur
-      if (!user) throw new Error(`User with id ${id} not found`);
-      user = await user.populate("FavorisMoviesAdd");
-      let moovie_to_add = await Moovie.findById(favorisMovies);
-      // modifiation du user et de la props voulue
-      user.FavorisMoviesAdd.push(moovie_to_add._id);
-      // sauvegarde de la modification
-      updatedUser = await user.save();
-    } else {
-      let user = await User.findById(id);
-      // si user === null => on leve une erreur
-      if (!user) throw new Error(`User with id ${id} not found`);
-      user = await user.populate("FavorisMoviesAdd");
-      let moovie_to_add = await Moovie.findById(favorisMovies);
-      // modifiation du user et de la props voulue
-      console.log(user.FavorisMoviesAdd);
-      user.FavorisMoviesAdd.splice(moovie_to_add._id, 1);
-      console.log(user.FavorisMoviesAdd);
-      // sauvegarde de la modification
-      updatedUser = await user.save();
-    }
+    // recuperation du user depuis la BDD via son id
+    let user = await User.findById(id);
+    // si user === null => on leve une erreur
+    if (!user) throw new Error(`User with id ${id} not found`);
+    user = await user.populate("FavorisMoviesAdd");
+    let moovie_to_add = await Moovie.findById(favorisMovies);
+    // modifiation du user et de la props voulue
+    user.FavorisMoviesAdd.push(moovie_to_add._id);
+    // sauvegarde de la modification
+    updatedUser = await user.save();
   } catch (e) {
     console.log("nope");
     console.error(e.message);
@@ -183,6 +192,7 @@ export const UserDAO = {
   readById,
   readByEmail,
   deleteOne,
+  deleteMovie,
   updateUser,
   updateFavMovies,
   getUserWithMovies,

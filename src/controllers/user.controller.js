@@ -58,12 +58,18 @@ const signUp = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const { pseudo, email, password, userId } = req.body;
+  const { pseudo, email, password, userId, darkMode } = req.body;
 
   const { hashed, err } = await hash(password);
   if (!!err || !hashed) return res.status(400).json({ message: err });
 
-  const resultUser = await UserDAO.updateUser(userId, pseudo, email, hashed);
+  const resultUser = await UserDAO.updateUser(
+    userId,
+    pseudo,
+    email,
+    hashed,
+    darkMode
+  );
   if (!!resultUser.error)
     return res.status(400).json({ message: resultUser.error });
 
@@ -76,15 +82,13 @@ const updateUser = async (req, res) => {
 };
 
 const updateFavMovies = async (req, res) => {
-  const { userId, favorisMovies, deleteFromFav } = req.body;
+  const { userId, favorisMovies } = req.body;
 
   const { error, updatedUser } = await UserDAO.updateFavMovies(
     userId,
-    favorisMovies,
-    deleteFromFav
+    favorisMovies
   );
   console.log(favorisMovies);
-  console.log(deleteFromFav);
   if (!!error) return res.status(400).json({ message: error });
 
   return res.json({
@@ -97,6 +101,18 @@ const deleteOne = async (req, res) => {
   const { userId } = req.body;
 
   const { error, deletedUser } = await UserDAO.deleteOne(userId);
+  if (!!error) return res.status(400).json({ message: error });
+
+  return res.json({ message: `User deleted successfully`, user: deletedUser });
+};
+
+const deleteMovie = async (req, res) => {
+  const { userId, favorisMovies } = req.body;
+
+  const { error, deletedUser } = await UserDAO.deleteMovie(
+    userId,
+    favorisMovies
+  );
   if (!!error) return res.status(400).json({ message: error });
 
   return res.json({ message: `User deleted successfully`, user: deletedUser });
@@ -117,6 +133,7 @@ export const UserController = {
   signUp,
   getUser,
   deleteOne,
+  deleteMovie,
   updateUser,
   getUserWithMovies,
   updateFavMovies,

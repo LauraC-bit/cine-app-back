@@ -8,6 +8,7 @@ const initUserRoutes = (app, sm, jwt) => {
   router.post("/sign-up", sm, UserController.signUp);
   router.patch("/update-user", jwt, sm, UserController.updateUser);
   router.delete("/delete", jwt, sm, UserController.deleteOne);
+  router.delete("/delete-movie", sm, UserController.deleteMovie);
   router.get("/user-movies", jwt, sm, UserController.getUserWithMovies);
   router.patch("/update-favmovies", jwt, sm, UserController.updateFavMovies);
 

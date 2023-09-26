@@ -6,6 +6,7 @@ export const getUserInfos = (user) => {
     email: user.email,
     pseudo: user.pseudo,
     FavorisMoviesAdd: user.FavorisMoviesAdd,
+    darkMode: user.darkMode,
   };
 
   return formatedUser;
